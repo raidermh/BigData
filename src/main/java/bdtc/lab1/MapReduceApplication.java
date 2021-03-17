@@ -9,6 +9,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import org.apache.hadoop.util.GenericOptionsParser;
 
 import java.net.URI;
@@ -26,7 +27,7 @@ public class MapReduceApplication {
             System.exit(1);
         }
 
-        Job job = Job.getInstance(conf,"Distributed Cache");
+        Job job = Job.getInstance(conf,"Use Distributed Cache and Create Sequence File");
 
         job.setJarByClass(MapReduceApplication.class);
         job.setMapperClass(HW1Mapper.class);
@@ -46,6 +47,9 @@ public class MapReduceApplication {
             System.out.println("File Not Added");
             System.exit(1);
         }
+
+        // Устанавливаем формат выходного файла = SequenceFile
+        job.setOutputFormatClass(SequenceFileOutputFormat.class);
 
         FileInputFormat.addInputPath(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job,new Path(args[1]));
