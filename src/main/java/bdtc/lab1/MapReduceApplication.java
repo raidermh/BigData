@@ -14,6 +14,10 @@ import org.apache.hadoop.util.GenericOptionsParser;
 
 import java.net.URI;
 
+/*
+Point of entry. Basic parameters are created here hadoop job
+*/
+
 @Log4j
 public class MapReduceApplication {
 
@@ -43,12 +47,13 @@ public class MapReduceApplication {
             //the complete URI(Uniform Resource Identifier) file path in Hdfs
             job.addCacheFile(new URI("hdfs://localhost:9000/cached_Dict/dictPlace.txt"));
 
+
         } catch (Exception e) {
             System.out.println("File Not Added");
             System.exit(1);
         }
 
-        // Устанавливаем формат выходного файла = SequenceFile
+        // Format Output File = SequenceFile
         job.setOutputFormatClass(SequenceFileOutputFormat.class);
 
         FileInputFormat.addInputPath(job, new Path(args[0]));
