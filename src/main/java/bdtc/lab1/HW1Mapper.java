@@ -11,18 +11,21 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class HW1Mapper extends Mapper<LongWritable, Text, Text, LongWritable> {
 
-    ArrayList<String> dictPlace = null;
+    List<String> dictPlace = null;
 
-    public void setup(Context context) throws IOException,InterruptedException {
-        dictPlace = new ArrayList<String>();
+    public void setup(Context context) throws IOException {
+        dictPlace = new ArrayList<>();
         URI[]cacheFiles = context.getCacheFiles();
         if (cacheFiles != null && cacheFiles.length > 0) {
             try {
-                String line = "";
+                String line;
 				/*  Create a FileSystem object and pass configuration object in it.
 					All code that may potentially use the Hadoop Distributed File System
 					         should be written to use a FileSystem object.
@@ -58,10 +61,105 @@ public class HW1Mapper extends Mapper<LongWritable, Text, Text, LongWritable> {
 
         for (int i = 0; i < words.length; i++) {
             //removing all special symbols and converting it to lowerCase
-            String temp = words[i].replaceAll("[?,'()]", "").toLowerCase();
-            //if present in ArrayList we write
-            if (dictPlace.contains(temp)) {
-                context.write(new Text(temp), new LongWritable(1));
+            String temp = words[i];
+
+            Pattern patternX = Pattern.compile("X=(\\w+)");
+            Pattern patternY = Pattern.compile("Y=(\\w+)");
+
+            Matcher matcherX = patternX.matcher(temp);
+            Matcher matcherY = patternY.matcher(temp);
+
+            String resultStrX = null;
+            String resultStrY = null;
+
+            while (matcherX.find()) {
+                String resultX = matcherX.group();
+                resultStrX = resultX.substring(resultX.lastIndexOf("=") + 1);
+            }
+
+            while (matcherY.find()) {
+                String resultY = matcherY.group();
+                resultStrY = resultY.substring(resultY.lastIndexOf("=") + 1);
+            }
+
+            String [] dictWords = dictPlace.toArray(new String[dictPlace.size()]);
+
+            for (int j = 0; j < dictWords.length; j++) {
+                String dictTemp = dictWords[j];
+
+                Pattern patternP = Pattern.compile("P=(\\w+)");
+                Pattern patternMinX = Pattern.compile("minX=(\\w+)");
+                Pattern patternMaxX = Pattern.compile("maxX=(\\w+)");
+                Pattern patternMinY = Pattern.compile("minY=(\\w+)");
+                Pattern patternMaxY = Pattern.compile("maxY=(\\w+)");
+
+                Matcher matcherP = patternP.matcher(dictTemp);
+                Matcher matcherMinX = patternMinX.matcher(dictTemp);
+                Matcher matcherMaxX = patternMaxX.matcher(dictTemp);
+                Matcher matcherMinY = patternMinY.matcher(dictTemp);
+                Matcher matcherMaxY = patternMaxY.matcher(dictTemp);
+
+                String resultStrP = null;
+                String resultStrMinX = null;
+                String resultStrMaxX = null;
+                String resultStrMinY = null;
+                String resultStrMaxY = null;
+
+                while (matcherP.find()) {
+                    String resultP = matcherP.group();
+                    resultStrP = resultP.substring(resultP.lastIndexOf("=") + 1);
+                }
+
+                while (matcherMinX.find()) {
+                    String resultMinX = matcherMinX.group();
+                    resultStrMinX = resultMinX.substring(resultMinX.lastIndexOf("=") + 1);
+                }
+
+                while (matcherMaxX.find()) {
+                    String resultMaxX = matcherMaxX.group();
+                    resultStrMaxX = resultMaxX.substring(resultMaxX.lastIndexOf("=") + 1);
+                }
+
+                while (matcherMinY.find()) {
+                    String resultMinY = matcherMinY.group();
+                    resultStrMinY = resultMinY.substring(resultMinY.lastIndexOf("=") + 1);
+                }
+
+                while (matcherMaxY.find()) {
+                    String resultMaxY = matcherMaxY.group();
+                    resultStrMaxY = resultMaxY.substring(resultMaxY.lastIndexOf("=") + 1);
+                }
+
+                int resultIntX = 0;
+                int resultIntY = 0;
+                int resultIntMinX = 0;
+                int resultIntMaxX = 0;
+                int resultIntMinY = 0;
+                int resultIntMaxY = 0;
+
+
+                if (resultStrX != null) {
+                    resultIntX = Integer.parseInt(resultStrX.trim());
+                }
+                if (resultStrY != null) {
+                    resultIntY = Integer.parseInt(resultStrY.trim());
+                }
+                if (resultStrMinX != null) {
+                    resultIntMinX = Integer.parseInt(resultStrMinX.trim());
+                }
+                if (resultStrMaxX != null) {
+                    resultIntMaxX = Integer.parseInt(resultStrMaxX.trim());
+                }
+                if (resultStrMinY != null) {
+                    resultIntMinY = Integer.parseInt(resultStrMinY.trim());
+                }
+                if (resultStrMaxY != null) {
+                    resultIntMaxY = Integer.parseInt(resultStrMaxY.trim());
+                }
+
+                if (resultIntX > resultIntMinX && resultIntX <= resultIntMaxX && resultIntY > resultIntMinY && resultIntY <= resultIntMaxY) {
+                    context.write(new Text(resultStrP), new LongWritable(1));
+                }
             }
         }
     }

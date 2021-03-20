@@ -20,42 +20,13 @@ TEMP=("HIGH"
 
 # function return one row and write in log file
 getLine () {
-        TIMESTAMP=$(date -d "$((RANDOM%1+2020))-$((RANDOM%12+1))-$((RANDOM%28+1)) $((RANDOM%23+1)):$((RANDOM%59+1)):$((RANDOM%59+1))" '+%d-%m-%Y %H:%M:%S')
-        #TIMESTAMP=`date +%Y-%m-%d_%H-%M-%S`
-        NUMBER_X=$((1 + RANDOM % 900))
-        NUMBER_Y=$((1 + RANDOM % 600))
+        TIMESTAMP=$(date -d "$((RANDOM%1+2020))-$((RANDOM%12+1))-$((RANDOM%28+1)) $((RANDOM%23+1)):$((RANDOM%59+1)):$((RANDOM%59+1))" '+%d-%m-%Y_%H:%M:%S')
+        NUMBER_X="X="$((1 + RANDOM % 900))
+        NUMBER_Y="Y="$((1 + RANDOM % 600))
 
-# define areas from coordinates X and Y
-        if [[ $NUMBER_X -gt 0 && $NUMBER_X -le 300 && $NUMBER_Y -gt 0 && $NUMBER_Y -le 300 ]]
-          then
-            PLACE_ID="wrapper"
-
-        elif [[ $NUMBER_X -gt 300 && $NUMBER_X -le 600 && $NUMBER_Y -gt 0 && $NUMBER_Y -le 300 ]]
-          then
-            PLACE_ID="header"
-
-        elif [[ $NUMBER_X -gt 600 && $NUMBER_X -le 900 && $NUMBER_Y -gt 0 && $NUMBER_Y -le 300 ]]
-          then
-            PLACE_ID="main"
-
-        elif [[ $NUMBER_X -gt 0 && $NUMBER_X -le 300 && $NUMBER_Y -gt 300 && $NUMBER_Y -le 600 ]]
-          then
-            PLACE_ID="sidebar"
-
-        elif [[ $NUMBER_X -gt 300 && $NUMBER_X -le 600 && $NUMBER_Y -gt 300 && $NUMBER_Y -le 600 ]]
-          then
-            PLACE_ID="content"
-
-        elif [[ $NUMBER_X -gt 600 && $NUMBER_X -le 900 && $NUMBER_Y -gt 300 && $NUMBER_Y -le 600 ]]
-          then
-            PLACE_ID="footer"
-
-        else
-          PLACE_ID= "unknown"
-        fi
 
 #write row in file
-        echo "$TIMESTAMP $NUMBER_X $NUMBER_Y ${USER_ID[$((RANDOM % ${#USER_ID[*]}))]} $PLACE_ID ${TEMP[$((RANDOM % ${#TEMP[*]}))]}" >> input/genFile.txt
+        echo "$TIMESTAMP $NUMBER_X-$NUMBER_Y ${USER_ID[$((RANDOM % ${#USER_ID[*]}))]} ${TEMP[$((RANDOM % ${#TEMP[*]}))]}" >> input/genFile.txt
 }
 
 # delete and create dir
