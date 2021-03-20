@@ -60,7 +60,7 @@ public class HW1Mapper extends Mapper<LongWritable, Text, Text, LongWritable> {
         String [] words = value.toString().split(" ");
 
         for (int i = 0; i < words.length; i++) {
-            //removing all special symbols and converting it to lowerCase
+
             String temp = words[i];
 
             Pattern patternX = Pattern.compile("X=(\\w+)");
