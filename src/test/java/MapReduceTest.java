@@ -1,6 +1,5 @@
 import bdtc.lab1.HW1Mapper;
 import bdtc.lab1.HW1Reducer;
-
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mrunit.mapreduce.MapDriver;
@@ -9,11 +8,17 @@ import org.apache.hadoop.mrunit.mapreduce.ReduceDriver;
 import org.junit.Before;
 import org.junit.Test;
 
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Клас MapReduceTest включает набор тестов для HW1Mapper, HW1Reducer, MapReduceTest.
+ *
+ * @author Mikhail Khrychev
+ * @version  1.0.1
+ * @since 20.03.2021
+ */
 
 public class MapReduceTest {
 

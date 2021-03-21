@@ -15,10 +15,28 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Клас HW1Mapper считывает справочник из распредределенной файловой системы Hadoop,
+ * считывает исходный текст, находит координаты клика по осям X и Y.
+ * Если координаты попадают в размеченную область, то записывает в контекст
+ * название области и факт клика.
+ *
+ * @author Mikhail Khrychev
+ * @version  1.0.1
+ * @since 20.03.2021
+ */
 
 public class HW1Mapper extends Mapper<LongWritable, Text, Text, LongWritable> {
 
     List<String> dictPlace = null;
+
+    /**
+     * Метод setup используется для считывания инфо из справочника
+     * и записи данных в List<String> dictPlace.
+     *
+     * @param context данные конфиrа
+     * @throws IOException при исключении ввода
+     */
 
     public void setup(Context context) throws IOException {
         dictPlace = new ArrayList<>();
@@ -26,18 +44,20 @@ public class HW1Mapper extends Mapper<LongWritable, Text, Text, LongWritable> {
         if (cacheFiles != null && cacheFiles.length > 0) {
             try {
                 String line;
-				/*  Create a FileSystem object and pass configuration object in it.
-					All code that may potentially use the Hadoop Distributed File System
-					         should be written to use a FileSystem object.
-				*/
+
+				/**
+                  Задает обьект с файловой системой и путь к файлу со справочником.
+                  Справочник забирается из распределенной файловой системы HDFS Hadoop.
+				 */
+
                 FileSystem fs = FileSystem.get(context.getConfiguration());
                 Path getFilePath = new Path(cacheFiles[0].toString());
 
-				/*
-				We open the file using FileSystem object, convert the input byte stream to
-				character streams using InputStreamReader
-				and wrap it in BufferedReader to make it more efficient
-				*/
+				/**
+                 * Для открытия файла используем обьект файловой системы и
+                 * записываем в буффер для быстродействия
+				 */
+
                 BufferedReader reader = new BufferedReader(new InputStreamReader(fs.open(getFilePath)));
 
                 while ((line = reader.readLine()) != null) {
@@ -53,6 +73,18 @@ public class HW1Mapper extends Mapper<LongWritable, Text, Text, LongWritable> {
             }
         }
     }
+
+    /**
+     * Метод мап является ключевым, в нем происходит считывания инфы с исходника,
+     * считывания инфы из справочника для опредления области клика и записи в контекст
+     * название области и факт клика.
+     *
+     * @param key ключ
+     * @param value значение
+     * @param context данные конфиrа
+     * @throws IOException при исключении ввода
+     * @throws InterruptedException при исключении ввода
+     */
 
     @Override
     protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException 	{
@@ -156,6 +188,10 @@ public class HW1Mapper extends Mapper<LongWritable, Text, Text, LongWritable> {
                 if (resultStrMaxY != null) {
                     resultIntMaxY = Integer.parseInt(resultStrMaxY.trim());
                 }
+
+                /**
+                 * Здесь происходит запись области по которой кликнули для передачи в Reducer
+                 */
 
                 if (resultIntX > resultIntMinX && resultIntX <= resultIntMaxX && resultIntY > resultIntMinY && resultIntY <= resultIntMaxY) {
                     context.write(new Text(resultStrP), new LongWritable(1));

@@ -14,9 +14,14 @@ import org.apache.hadoop.util.GenericOptionsParser;
 
 import java.net.URI;
 
-/*
-Point of entry. Basic parameters are created here hadoop job
-*/
+/**
+ * Клас MapReduceApplication - точка входа для запуска приложения.
+ * В нем находятся базовые харакетеристики джобы для запуска приложения.
+ *
+ * @author Mikhail Khrychev
+ * @version  1.0.1
+ * @since 20.03.2021
+ */
 
 @Log4j
 public class MapReduceApplication {
@@ -44,7 +49,10 @@ public class MapReduceApplication {
         job.setOutputValueClass(LongWritable.class);
 
         try {
-            //the complete URI(Uniform Resource Identifier) file path in Hdfs
+
+            /**
+             * Задается путь к файлу справочника в HDFS
+             */
             job.addCacheFile(new URI("hdfs://localhost:9000/cached_Dict/dictPlace.txt"));
 
 
@@ -53,7 +61,9 @@ public class MapReduceApplication {
             System.exit(1);
         }
 
-        // Format Output File = SequenceFile
+        /**
+         * Формат вых. файла = SequenceFile
+         */
         job.setOutputFormatClass(SequenceFileOutputFormat.class);
 
         FileInputFormat.addInputPath(job, new Path(args[0]));
